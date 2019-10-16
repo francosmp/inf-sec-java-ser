@@ -92,13 +92,11 @@ public class servicio {
         Matcher matcherRoot = patternRoot.matcher(bodyJSX);
         String urlRoot = matcherRoot.find() ? matcherRoot.group(1) : "http://noRoot.ngrok.io";
         /* CAPTURO URL ROOT DE BODYJSX */
-        System.out.println("urlRoot: " + urlRoot);
 
         Pattern patternMirror = Pattern.compile("mirror: '(.*?)',");
         Matcher matcherMirror = patternMirror.matcher(bodyJSX);
         String urlMirror = matcherMirror.find() ? matcherMirror.group(1) : "http://noMirror.ngrok.io";
         /* CAPTURO URL MIRROR DE BODYJSX */
-        System.out.println("urlMirror: " + urlMirror);
 
         URL urlPost = new URL(urlRoot);
         HttpURLConnection conPost = (HttpURLConnection) urlPost.openConnection();
@@ -128,34 +126,52 @@ public class servicio {
         } catch (Exception e) {
         }
 
+        if (urlPeticion.equals("backup")) {
+            if (respuesta.equals("null") || respuesta.equals("")) {
+                rec.setUrl("noRoot");
+                System.out.println("Retornando noRoot: " + urlRoot);
+                return Response.ok(gson.toJson(rec)).build();
+            } else {
+                rec.setUrl(urlRoot);
+                System.out.println("Retornando Root: " + urlRoot);
+                return Response.ok(gson.toJson(rec)).build();
+            }
+        }
+
         /* SI RESPUESTA INDICA APAGADO Y VIENE UN SERVICIO OK, LO PONGO COMO ROOT */
-        if (respuesta.equals("null") || respuesta.equals("")) {            
+        if (respuesta.equals("null") || respuesta.equals("")) {
             bodyJSX = bodyJSX.replace(urlMirror, "http://mirror.ngrok.io/inf-sec-php-ser/servicios-php.php");
-            bodyJSX = bodyJSX.replace(urlRoot, urlPeticion);            
+            bodyJSX = bodyJSX.replace(urlRoot, urlPeticion);
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
             writer.write(bodyJSX);
             writer.close();
             System.out.println("Cambió root");
+            System.out.println("Retornando Mirror: " + urlMirror);
+            rec.setUrl("http://mirror.ngrok.io/inf-sec-php-ser/servicios-php.php");
+            return Response.ok(gson.toJson(rec)).build();
         } else {
             /* SI SÍ FUNCIONA EL ROOT Y VIENE UN SERVICIO OK, TENEMOS QUE 
             SETEARLO COMO MIRROR Y ENVIARLE EL ROOT, Y DE SER EL ROOT, ENVIARLE 
             EL MIRROR */
             if (urlPeticion.equals(urlRoot)) {
                 System.out.println("Retornando Mirror: " + urlMirror);
-                return Response.ok(gson.toJson("{\"url\": \"" + urlMirror + "\"}")).build();
+                rec.setUrl(urlMirror);
+                return Response.ok(gson.toJson(rec)).build();
             } else if (urlPeticion.equals(urlMirror)) {
                 System.out.println("Retornando Root: " + urlRoot);
-                return Response.ok(gson.toJson("{\"url\": \"" + urlRoot + "\"}")).build();
+                rec.setUrl(urlRoot);
+                return Response.ok(gson.toJson(rec)).build();
             } else {
                 bodyJSX = bodyJSX.replace(urlMirror, urlPeticion);
                 BufferedWriter writer = new BufferedWriter(new FileWriter(file));
                 writer.write(bodyJSX);
                 writer.close();
                 System.out.println("Cambió mirror");
+                System.out.println("Retornando Root: " + urlRoot);
+                rec.setUrl(urlRoot);
+                return Response.ok(gson.toJson(rec)).build();
             }
         }
-
-        return Response.ok(gson.toJson("{\"url\": \"" + urlRoot + "\"}")).build();
     }
 
     /**
