@@ -79,8 +79,7 @@ public class servicio {
         System.out.println("Post: " + urlPeticion);
         String bodyJSX = "";
 
-        File file = new File("C:\\Users\\iFiL\\Documents\\WebProjects\\"
-                + "inf-sec-ha\\src\\components\\Body.jsx");
+        File file = new File("C:\\Users\\fsmeccap\\Documents\\WebProjects\\inf-sec-ha\\src\\components\\Body.jsx");
         FileInputStream fis = new FileInputStream(file);
         byte[] data = new byte[(int) file.length()];
         fis.read(data);
@@ -140,6 +139,7 @@ public class servicio {
 
         /* SI RESPUESTA INDICA APAGADO Y VIENE UN SERVICIO OK, LO PONGO COMO ROOT */
         if (respuesta.equals("null") || respuesta.equals("")) {
+            System.out.println("Repuesta: " + respuesta);
             bodyJSX = bodyJSX.replace(urlMirror, "http://mirror.ngrok.io/inf-sec-php-ser/servicios-php.php");
             bodyJSX = bodyJSX.replace(urlRoot, urlPeticion);
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
