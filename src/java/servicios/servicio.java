@@ -139,14 +139,13 @@ public class servicio {
 
         /* SI RESPUESTA INDICA APAGADO Y VIENE UN SERVICIO OK, LO PONGO COMO ROOT */
         if (respuesta.equals("null") || respuesta.equals("")) {
-            System.out.println("Repuesta: " + respuesta);
             bodyJSX = bodyJSX.replace(urlMirror, "http://mirror.ngrok.io/inf-sec-php-ser/servicios-php.php");
             bodyJSX = bodyJSX.replace(urlRoot, urlPeticion);
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
             writer.write(bodyJSX);
             writer.close();
             System.out.println("Cambió root");
-            System.out.println("Retornando Mirror: " + urlMirror);
+            System.out.println("Retornando Mirror: http://mirror.ngrok.io/inf-sec-php-ser/servicios-php.php");
             rec.setUrl("http://mirror.ngrok.io/inf-sec-php-ser/servicios-php.php");
             return Response.ok(gson.toJson(rec)).build();
         } else {
@@ -158,8 +157,8 @@ public class servicio {
                 rec.setUrl(urlMirror);
                 return Response.ok(gson.toJson(rec)).build();
             } else if (urlPeticion.equals(urlMirror)) {
-                System.out.println("Retornando Root: " + urlRoot);
-                rec.setUrl(urlRoot);
+                System.out.println("No espejo: http://mirror.ngrok.io/inf-sec-php-ser/servicios-php.php");
+                rec.setUrl("http://mirror.ngrok.io/inf-sec-php-ser/servicios-php.php");
                 return Response.ok(gson.toJson(rec)).build();
             } else {
                 bodyJSX = bodyJSX.replace(urlMirror, urlPeticion);
@@ -167,8 +166,8 @@ public class servicio {
                 writer.write(bodyJSX);
                 writer.close();
                 System.out.println("Cambió mirror");
-                System.out.println("Retornando Root: " + urlRoot);
-                rec.setUrl(urlRoot);
+                System.out.println("No espejo: http://mirror.ngrok.io/inf-sec-php-ser/servicios-php.php");
+                rec.setUrl("http://mirror.ngrok.io/inf-sec-php-ser/servicios-php.php");
                 return Response.ok(gson.toJson(rec)).build();
             }
         }
