@@ -75,6 +75,7 @@ public class servicio {
         Gson gson = new Gson();
         Objeto rec = gson.fromJson(content, Objeto.class);
         String urlPeticion = rec.getUrl();
+        String urlConfig = rec.getConfig();
         /* CAPTURO URL DE PETICION */
         System.out.println("Post: " + urlPeticion);
         String bodyJSX = "";
@@ -96,6 +97,11 @@ public class servicio {
         Matcher matcherMirror = patternMirror.matcher(bodyJSX);
         String urlMirror = matcherMirror.find() ? matcherMirror.group(1) : "http://noMirror.ngrok.io";
         /* CAPTURO URL MIRROR DE BODYJSX */
+
+        Pattern patternBackUp = Pattern.compile("backup: '(.*?)',");
+        Matcher matcherBackUp = patternBackUp.matcher(bodyJSX);
+        String urlBackUp = matcherBackUp.find() ? matcherBackUp.group(1) : "http://noRoot.ngrok.io";
+        /* CAPTURO URL BACKUP DE BODYJSX */
 
         URL urlPost = new URL(urlRoot);
         HttpURLConnection conPost = (HttpURLConnection) urlPost.openConnection();
@@ -125,12 +131,16 @@ public class servicio {
         } catch (Exception e) {
         }
 
-        if (urlPeticion.equals("backup")) {
+        if (urlConfig.equals("backup")) {
             if (respuesta.equals("null") || respuesta.equals("")) {
                 rec.setUrl("noRoot");
                 System.out.println("Retornando noRoot: " + urlRoot);
                 return Response.ok(gson.toJson(rec)).build();
             } else {
+                bodyJSX = bodyJSX.replace(urlBackUp, urlPeticion);
+                BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+                writer.write(bodyJSX);
+                writer.close();
                 rec.setUrl(urlRoot);
                 System.out.println("Retornando Root: " + urlRoot);
                 return Response.ok(gson.toJson(rec)).build();
@@ -155,6 +165,7 @@ public class servicio {
             if (urlPeticion.equals(urlRoot)) {
                 System.out.println("Retornando Mirror: " + urlMirror);
                 rec.setUrl(urlMirror);
+                rec.setConfig(urlBackUp);
                 return Response.ok(gson.toJson(rec)).build();
             } else if (urlPeticion.equals(urlMirror)) {
                 System.out.println("No espejo: http://mirror.ngrok.io/inf-sec-php-ser/servicios-php.php");
@@ -168,6 +179,7 @@ public class servicio {
                 System.out.println("Cambió mirror");
                 System.out.println("No espejo: http://mirror.ngrok.io/inf-sec-php-ser/servicios-php.php");
                 rec.setUrl("http://mirror.ngrok.io/inf-sec-php-ser/servicios-php.php");
+                rec.setConfig(urlBackUp);
                 return Response.ok(gson.toJson(rec)).build();
             }
         }
@@ -186,6 +198,7 @@ public class servicio {
     public class Objeto {
 
         private String url;
+        private String config;
 
         public String getUrl() {
             return url;
@@ -193,6 +206,14 @@ public class servicio {
 
         public void setUrl(String url) {
             this.url = url;
+        }
+
+        public String getConfig() {
+            return config;
+        }
+
+        public void setConfig(String config) {
+            this.config = config;
         }
 
     }
