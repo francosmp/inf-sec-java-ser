@@ -100,7 +100,7 @@ public class servicio {
 
         Pattern patternBackUp = Pattern.compile("backup: '(.*?)',");
         Matcher matcherBackUp = patternBackUp.matcher(bodyJSX);
-        String urlBackUp = matcherBackUp.find() ? matcherBackUp.group(1) : "http://noRoot.ngrok.io";
+        String urlBackUp = matcherBackUp.find() ? matcherBackUp.group(1) : "http://noBackUp.ngrok.io";
         /* CAPTURO URL BACKUP DE BODYJSX */
 
         URL urlPost = new URL(urlRoot);
