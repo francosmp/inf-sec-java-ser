@@ -142,6 +142,7 @@ public class servicio {
                 writer.write(bodyJSX);
                 writer.close();
                 rec.setUrl(urlRoot);
+                System.out.println("BackUp");
                 System.out.println("Retornando Root: " + urlRoot);
                 return Response.ok(gson.toJson(rec)).build();
             }
