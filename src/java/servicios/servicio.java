@@ -131,6 +131,11 @@ public class servicio {
         } catch (Exception e) {
         }
 
+        if (urlConfig.equals("startup")) {
+            rec.setUrl(urlBackUp);
+            return Response.ok(gson.toJson(rec)).build();
+        }
+
         if (urlConfig.equals("backup")) {
             if (respuesta.equals("null") || respuesta.equals("")) {
                 rec.setUrl("noRoot");
